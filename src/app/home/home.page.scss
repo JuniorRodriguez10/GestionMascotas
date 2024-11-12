@@ -25,3 +25,82 @@
 #container a {
   text-decoration: none;
 }
+
+.login{
+  width: 130px;
+  position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background-color: transparent; 
+    color: #ffffff; 
+    border: 2px solid #ffffff; 
+    border-radius: 20px; 
+    padding: 5px 15px; 
+    font-weight: bold; /* negrita */
+    text-transform: uppercase; /* mayúsculas */
+}
+
+.login:hover {
+  background-color: rgb(233, 226, 235); /* movimiento del mouse */
+}
+
+
+.background-video {
+  position: absolute; /* Posiciona el video */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ocupa todo el ancho */
+  height: 100%; /* Ocupa toda la altura */
+  object-fit: cover; /* Mantiene la relación de aspecto */
+  z-index: -1; /* Coloca el video detrás del contenido */
+}
+
+.overlay {
+  position: relative;
+  z-index: 1; /* Asegura que el contenido esté por encima del video */
+  background: rgba(23, 18, 83, 0.475); 
+  padding: 20px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Para centrar verticalmente en toda la pantalla */
+  font-size: medium;
+  
+
+}
+
+.content {
+  text-align: center; 
+  color: rgb(46, 15, 133); 
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.contenido{
+  background-color: rgba(172, 188, 240, 0.877); // Transparencia
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(134, 121, 121, 0.692); // Sombritas
+    width: 100%;
+    max-width: 340px; // Tam form
+    text-align: center;
+    border-color: aliceblue;
+}
+
+
+
+.title-container {
+  text-align: center;
+  
+}
+
+.title-container h1 {
+  color: white;
+  font-size: 2rem; 
+  font-weight: bold;
+  margin: 0;
+}
+

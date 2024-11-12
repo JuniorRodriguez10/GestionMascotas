@@ -1,20 +1,38 @@
+
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <app-header title="Gestion de mascotas"></app-header>
+
+    <ion-buttons slot="end">
+      <ion-button
+        [routerLink]="['/login']"
+        class="login"
+        expand="block"
+        mode="ios"
+        
+      >
+        Login
+        <ion-icon slot="end" name="person-add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <video autoplay loop muted preload="auto" class="background-video">
+    <source src="assets/video/mascotas.mp4" type="video/mp4" />
+  </video>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="overlay">
+    <div class="title-container">
+      <div class="contenido">
+
+
+        <h1>Bienvenido a nuestra app de gestion de mascotas</h1>
+        <div class="content">
+          <p >Cuida a tus mascotas como se merecen, nosotros te ayudamos a organizarlo todo.</p>
+        </div>
+      </div>
+      </div>
   </div>
 </ion-content>
