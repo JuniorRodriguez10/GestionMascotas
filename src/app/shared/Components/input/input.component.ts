@@ -10,29 +10,30 @@ type buttonType = "text" | "number" | "tel" | "email" | "password";
 })
 export class InputComponent  implements OnInit {
 
-  @Input() control!: FormControl;
+  @Input() control: FormControl = new FormControl(''); 
   @Input() type: buttonType = "text";
-  @Input() label!: string;
-  @Input() autocomplete!: string;
-  @Input() icon!: string;
+  @Input() label: string = '';
+  @Input() autocomplete: string = 'off';
+  @Input() icon?: string;
 
-  isPassword!: boolean;
+  isPassword: boolean = false;
   hide: boolean = true;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
-    if (this.type == 'password') this.isPassword = true;
+   
+    this.isPassword = this.type === 'password';
   }
 
-  public setValue(event: any){
-    this.control.setValue(event.target.value)
+  public setValue(event: any): void {
+    if (this.control) {
+      this.control.setValue(event.target.value); 
+    }
   }
 
-  showOrHidePassword(){
+  public showOrHidePassword(): void {
     this.hide = !this.hide;
-    if (this.hide)this.type = 'password';
-    else this.type = 'text';
+    this.type = this.hide ? 'password' : 'text';
   }
-
 }

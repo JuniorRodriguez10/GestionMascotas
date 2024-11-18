@@ -5,4 +5,5 @@ export interface User {
   age: number;
   phone: string;
   image: string;
+  email: string;
 }

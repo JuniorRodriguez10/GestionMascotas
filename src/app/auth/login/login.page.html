@@ -4,6 +4,8 @@
   <div class="d-flex-center">
     <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="doLogin()">
       <app-logo></app-logo>
+
+      <!-- Campo de email -->
       <app-input
         [control]="email"
         autocomplete="email"
@@ -11,22 +13,24 @@
         type="email"
         label="Email"
         class="casilla"
-      >
-      </app-input>
+      ></app-input>
 
+      <!-- Campo de contraseña -->
       <app-input
         [control]="password"
         icon="lock-closed-outline"
         type="password"
-        label="password"
+        label="Password"
       ></app-input>
 
+      <!-- Botón de inicio de sesión -->
       <app-button
         type="submit"
-        [disabled]="this.loginForm.invalid"
+        [disabled]="loginForm.invalid"
         value="Login"
       ></app-button>
 
+      <!-- Botón de registro -->
       <ion-button
         [routerLink]="['/signup']"
         class="register"

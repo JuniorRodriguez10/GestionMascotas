@@ -41,9 +41,12 @@ export class SignupPage implements OnInit {
   }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(async params => {
       this.id = params['id'];
-      if (this.id) this.fillFormForUpdate();
+      if (this.id) {
+        // Si hay un ID, rellenamos el formulario con los datos del usuario
+        await this.fillFormForUpdate();
+      }
     });
   }
 
@@ -67,103 +70,89 @@ export class SignupPage implements OnInit {
     });
   }
 
+  // Método para llenar el formulario con los datos existentes del usuario
+  private async fillFormForUpdate() {
+    try {
+      const userDoc = await this.angularFire.collection('users').doc(this.id).get().toPromise();
+  
+      // Verificar si el documento existe antes de acceder a sus datos
+      if (!userDoc?.exists) {
+        console.error("No se encontró el documento del usuario.");
+        return;  // Si el documento no existe, salimos de la función
+      }
+  
+      // Ahora se puede asegurar que 'data()' solo se llama si 'userDoc' es válido
+      const userData = userDoc.data() as User;  // Usamos el operador ?. para evitar errores si userDoc es undefined
+  
+      if (!userData) {
+        console.error("No se encontraron los datos del usuario.");
+        return;
+      }
+  
+      // Actualizamos el formulario con los valores de userData
+      this.registerForm.patchValue({
+        name: userData?.name,
+        lastName: userData?.lastName,
+        age: userData?.age,
+        phone: userData?.phone,
+        image: userData?.image,
+        email: userData?.email  // Usamos el email ahora
+      });
+    } catch (error) {
+      console.error("Error al cargar datos para actualización", error);
+    }
+  }
+
+  // Método para registrar un nuevo usuario
   public async doRegister() {
     try {
       await this.loadingSrv.show();
-      const { email, password, image } = this.registerForm.value;
-      const response: any = await this.authSrv.register(email, password);
+      const { name, lastName, age, phone, email, password, image } = this.registerForm.value;
+      
+      // Registrar el usuario en Firebase Authentication
+      const response = await this.authSrv.register(email, password);
       const userID = response.user?.uid;
       if (!userID) throw new Error('Failed to get user ID.');
-
-      let imageUrl = "";
+  
+      // Subir la imagen si está disponible
+      let imageUrl = '';
       if (image) {
         imageUrl = await this.supabase.uploadFileAndGetUrl(image);
       }
-
-      await this.signUser(userID, email, imageUrl);
-
+  
+      // Actualizar la información del usuario en Firestore
+      await this.authSrv.updateUser(userID, name, lastName, age, phone, email, imageUrl);
+  
       this.toastService.presentToast('Registration successful, welcome!', 2000, 'top');
-      this.navCtrl.navigateForward("/login");
-      await this.loadingSrv.dimiss();
+      this.navCtrl.navigateForward('/login');
+      await this.loadingSrv.dismiss();
     } catch (error) {
       console.error(error);
-      await this.loadingSrv.dimiss();
+      await this.loadingSrv.dismiss();
       this.toastService.presentErrorToast('Registration failed. Please try again.');
     }
   }
 
+  // Método para actualizar los datos del usuario
   public async doUpdate() {
     try {
       await this.loadingSrv.show();
-      const { image } = this.registerForm.value;
-
-      let imageUrl = '';
-      if (image && typeof image !== 'string') {
+      const { name, lastName, age, phone, image, email } = this.registerForm.value;
+      let imageUrl = "";
+      
+      if (image) {
         imageUrl = await this.supabase.uploadFileAndGetUrl(image);
-      } else {
-        const userDoc = await lastValueFrom(this.angularFire.collection('users').doc(this.id).get());
-        const userData = userDoc?.data() as User;
-        imageUrl = userData?.image || '';  
       }
 
-      await this.angularFire.collection('users').doc(this.id).update({
-        name: this.registerForm.get('name')?.value,
-        lastName: this.registerForm.get('lastName')?.value,
-        age: this.registerForm.get('age')?.value,
-        phone: this.registerForm.get('phone')?.value,
-        image: imageUrl  
-      });
-
-      this.toastService.presentToast('Datos actualizados con éxito.', 2000, 'top');
-      this.navCtrl.navigateForward('/profile');
-      await this.loadingSrv.dimiss();
+      // Llamamos al servicio para actualizar los datos del usuario
+      await this.authSrv.updateUser(this.id, name, lastName, age, phone, email, imageUrl);
+      this.toastService.presentToast('User updated successfully!', 2000, 'top');
+      this.navCtrl.navigateBack("/profile");  // Navegamos hacia el perfil del usuario, ajusta según necesites
+      await this.loadingSrv.dismiss();
     } catch (error) {
       console.error(error);
-      await this.loadingSrv.dimiss();
+      await this.loadingSrv.dismiss();
       this.toastService.presentErrorToast('Update failed. Please try again.');
-    }
-  }
-
-  private async fillFormForUpdate() {
-    try {
-      await this.loadingSrv.show();
-      const userDoc = await lastValueFrom(this.angularFire.collection('users').doc(this.id).get());
-
-      if (userDoc.exists) {
-        const userData = userDoc.data() as User;
-        this.registerForm.patchValue({
-          name: userData?.name || '',         
-          lastName: userData?.lastName || '', 
-          age: userData?.age || '',           
-          phone: userData?.phone || '',       
-          image: userData?.image || ''        
-        });
-      } else {
-        console.error('No user data found.');
-      }
-
-      this.registerForm.removeControl('email');
-      this.registerForm.removeControl('password');
-      await this.loadingSrv.dimiss();
-    } catch (error) {
-      console.error('Error registering user data:', error);
-      await this.loadingSrv.dimiss();
-    }
-  }
-
-  private async signUser(userID: string, email: string, imageUrl: string) {
-    try {
-      await this.angularFire.collection('users').doc(userID).set({
-        email,
-        image: imageUrl,                      
-        name: this.registerForm.get('name')?.value,
-        lastName: this.registerForm.get('lastName')?.value,
-        age: this.registerForm.get('age')?.value,
-        phone: this.registerForm.get('phone')?.value
-      });
-    } catch (error) {
-      console.error('Error registering user data:', error);
-      throw error;
     }
   }
 }

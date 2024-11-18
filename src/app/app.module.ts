@@ -11,6 +11,8 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core/core.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptorService } from './shared/services/auth.interceptor.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,7 +25,10 @@ import { CoreModule } from './core/core.module';
   CoreModule
 
 ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi:true}
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

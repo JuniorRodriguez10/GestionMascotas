@@ -10,7 +10,7 @@ import { FormControl } from '@angular/forms';
 export class AvatarComponent  implements OnInit {
   protected image = "https://ionicframework.com/docs/img/demos/avatar.svg";
 
-  @Input() control = new FormControl(""); //Para que el formulario sea reactivo
+  @Input() control = new FormControl(""); 
   @Input() onlyView = false; //limitarlo a solo lectura
 
   protected mimeType = "image/jpeg"; //para que solo sean archivos de imagenes
